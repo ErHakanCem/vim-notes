@@ -225,23 +225,30 @@ endfunction
 
 " Create a new linked note and insert a link at current cursor position
 function! notes#create_linked_note() range
-  " Store the current buffer number and position
-  let source_buf = bufnr('%')
-  
-  " Check if we're in visual mode by looking at the range
-  let visual_mode = (a:firstline != a:lastline)
+  " Get selected text in visual mode
   let selected_text = ""
   let title = ""
   
-  if visual_mode
-    " Get the selected text
-    let lines = getline(a:firstline, a:lastline)
-    let selected_text = join(lines, "\n")
+  " Check if we're in visual mode by looking at the range
+  if a:firstline != a:lastline
+    " Save the current registers
+    let save_reg_a = @a
+    let save_reg = @"
+    
+    " Yank the selected text into register a
+    silent execute a:firstline . "," . a:lastline . "yank a"
+    let selected_text = @a
+    
     " Use first line as title
+    let lines = split(selected_text, '\n')
     let title = lines[0]
     " Limit title length and clean it
     let title = strpart(title, 0, 50)
     let title = substitute(title, '^\s*\(.\{-}\)\s*$', '\1', '')
+    
+    " Restore registers
+    let @a = save_reg_a
+    let @" = save_reg
   else
     let title = input("New note title: ")
   endif
@@ -260,8 +267,8 @@ function! notes#create_linked_note() range
   " Create the link text
   let link = "[[" . timestamp . '-' . cleaned_title . "]]"
   
-  " Handle text replacement
-  if visual_mode
+  " If we have selected text, replace it with the link
+  if selected_text != ""
     " Delete the selected lines and insert the link
     silent execute a:firstline . "," . a:lastline . "delete"
     silent call append(a:firstline - 1, link)
