@@ -230,18 +230,26 @@ function! notes#create_linked_note() range
   let title = ""
   
   " Check if we're in visual mode by looking at the range
-  if a:firstline != a:lastline
+  if mode() =~# "[vV\<C-v>]" || (a:firstline != a:lastline)
     " Save the current registers
     let save_reg_a = @a
     let save_reg = @"
     
-    " Yank the selected text into register a
-    silent execute a:firstline . "," . a:lastline . "yank a"
-    let selected_text = @a
+    " Get the selected text
+    if a:firstline == a:lastline
+      " Single line selection
+      let line_content = getline(a:firstline)
+      let [start_col, end_col] = [col("'<"), col("'>")]
+      let selected_text = line_content[start_col-1:end_col-1]
+      let title = selected_text
+    else
+      " Multi-line selection
+      silent execute a:firstline . "," . a:lastline . "yank a"
+      let selected_text = @a
+      let lines = split(selected_text, '\n')
+      let title = lines[0]
+    endif
     
-    " Use first line as title
-    let lines = split(selected_text, '\n')
-    let title = lines[0]
     " Limit title length and clean it
     let title = strpart(title, 0, 50)
     let title = substitute(title, '^\s*\(.\{-}\)\s*$', '\1', '')
@@ -269,9 +277,17 @@ function! notes#create_linked_note() range
   
   " If we have selected text, replace it with the link
   if selected_text != ""
-    " Delete the selected lines and insert the link
-    silent execute a:firstline . "," . a:lastline . "delete"
-    silent call append(a:firstline - 1, link)
+    if a:firstline == a:lastline
+      " Single line replacement
+      let line = getline(a:firstline)
+      let [start_col, end_col] = [col("'<"), col("'>")]
+      let new_line = line[0:start_col-2] . link . line[end_col:]
+      call setline(a:firstline, new_line)
+    else
+      " Multi-line replacement
+      silent execute a:firstline . "," . a:lastline . "delete"
+      silent call append(a:firstline - 1, link)
+    endif
   else
     " Just insert the link on a new line
     call append(line('.'), link)
