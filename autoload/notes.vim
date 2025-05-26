@@ -234,10 +234,10 @@ function! notes#create_linked_note() range
     " Get the selected text
     let selected_text = join(getline(a:firstline, a:lastline), "\n")
     
-    " Use first line of selected text as title (cleaned up)
-    let first_line = split(selected_text, '\n')[0]
+    " Always use only the first line as title, regardless of selection
+    let title = getline(a:firstline)
     " Limit title length and clean it
-    let title = strpart(first_line, 0, 50)
+    let title = strpart(title, 0, 50)
     let title = substitute(title, '^\s*\(.\{-}\)\s*$', '\1', '')
   else
     let title = input("New note title: ")
