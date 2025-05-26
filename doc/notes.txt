@@ -1,0 +1,120 @@
+*notes.txt*  Simple Zettelkasten note taking plugin for Vim
+
+Author:  ErHakanCem
+License: MIT (see |notes-license|)
+Version: 0.2
+
+CONTENTS                                                       *notes-contents*
+
+    1. Introduction .......................... |notes-introduction|
+    2. Installation .......................... |notes-installation|
+    3. Configuration ......................... |notes-configuration|
+    4. Usage ................................. |notes-usage|
+        4.1 Key Mappings ..................... |notes-mappings|
+        4.2 Commands ......................... |notes-commands|
+    5. License ............................... |notes-license|
+
+==============================================================================
+1. Introduction                                            *notes-introduction*
+
+vim-notes is a simple Zettelkasten note-taking plugin for Vim. It helps you
+create and manage timestamped notes with consistent formatting, search through
+your notes, and create links between related notes.
+
+Features:
+- Create timestamped Markdown notes with a consistent format
+- Organize notes using a Zettelkasten system
+- Easily search, list, and navigate between notes
+- Create links between notes using wiki-style [[links]]
+- Create new linked notes from within existing notes
+- Support for FZF for enhanced navigation (optional)
+
+==============================================================================
+2. Installation                                            *notes-installation*
+
+Using a plugin manager (recommended):
+
+Using vim-plug: >
+    Plug 'ErHakanCem/vim-notes'
+<
+
+Using Vundle: >
+    Plugin 'ErHakanCem/vim-notes'
+<
+
+Using NeoBundle: >
+    NeoBundle 'ErHakanCem/vim-notes'
+<
+
+Manual installation: >
+    git clone https://github.com/ErHakanCem/vim-notes.git ~/.vim/pack/plugins/start/vim-notes
+<
+
+==============================================================================
+3. Configuration                                          *notes-configuration*
+
+You can customize the following settings in your .vimrc:
+
+Set the location for your notes directory (default is ~/Documents/zets/): >
+    let g:zettelkasten = '~/path/to/your/notes/'
+<
+
+Set the file extension for notes (default is .md): >
+    let g:notes_extension = '.md'
+<
+
+==============================================================================
+4. Usage                                                         *notes-usage*
+
+4.1 Key Mappings                                             *notes-mappings*
+
+The plugin defines the following key mappings:
+
+- <leader>nn: Create a new note
+- <leader>nf: Find a note by searching
+- <leader>nl: List all notes
+- <leader>na: Add a link to another note
+- <leader>ng: Follow a link under the cursor
+- <leader>nk: Create a new linked note (inserts link at cursor position)
+
+4.2 Commands                                                 *notes-commands*
+
+- :Notes                Create a new note
+- :NoteFind             Find a note by searching
+- :NoteList             List all notes
+- :NoteLink             Add a link to another note
+- :NoteFollow           Follow a link under the cursor
+- :NoteCreateLinked     Create a new linked note
+
+Creating a New Note ~
+
+To create a new note, press <leader>nn or run :Notes. You will be prompted for
+a title, and a new note will be created with a timestamp-based filename.
+
+If you have text selected in visual mode, it will be included as the content of
+the new note.
+
+Creating a Linked Note ~
+
+While editing a note, you can create a new note and insert a link to it by
+pressing <leader>nk or running :NoteCreateLinked. This will:
+
+1. Prompt you for a title for the new note
+2. Insert a link at your cursor position
+3. Create the new note with appropriate formatting
+4. Return you to your original position
+
+FZF Integration ~
+
+If you have FZF installed, the plugin will use it for enhanced note searching
+and listing.
+
+==============================================================================
+5. License                                                     *notes-license*
+
+This project is licensed under the MIT License.
+
+Copyright (c) 2025 ErHakanCem
+
+ vim:tw=78:ts=8:ft=help:norl:
+
