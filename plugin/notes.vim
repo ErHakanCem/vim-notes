@@ -30,7 +30,7 @@ if !hasmapto('<Plug>NotesNewNote')
 endif
 
 if !hasmapto('<Plug>NotesFindNote')
-  nmap <leader>nf <Plug>NotesFindNote
+  nmap <leader>nz <Plug>NotesFindNote  " Changed from nf to nz for find/search
   " Add alternative mapping for find
   nmap <leader>ns <Plug>NotesFindNote  " Additional mapping using 's' for search
 endif
