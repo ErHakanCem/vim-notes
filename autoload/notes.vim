@@ -229,8 +229,8 @@ function! notes#create_linked_note() range
   let selected_text = ""
   let title = ""
   
-  " Check if we're in visual mode by looking at the range
-  if a:firstline != a:lastline
+  " Check if we're in visual mode
+  if mode() =~# "[vV\<C-v>]" || (a:firstline != a:lastline)
     " Get the selected text
     let selected_text = join(getline(a:firstline, a:lastline), "\n")
     
@@ -260,8 +260,8 @@ function! notes#create_linked_note() range
   " If we have selected text, replace it with the link
   if selected_text != ""
     " Delete the selected lines and insert the link
-    execute a:firstline . "," . a:lastline . "delete"
-    call append(a:firstline - 1, link)
+    silent execute a:firstline . "," . a:lastline . "delete"
+    silent call append(a:firstline - 1, link)
   else
     " Just insert the link on a new line
     call append(line('.'), link)
