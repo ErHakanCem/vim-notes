@@ -224,13 +224,25 @@ function! notes#follow_link()
 endfunction
 
 " Create a new linked note and insert a link at current cursor position
-function! notes#create_linked_note()
-  " Store the current buffer number
-  let source_buf = bufnr('%')
-  let cur_pos = getpos('.')
+function! notes#create_linked_note() range
+  " Get selected text in visual mode
+  let selected_text = ""
+  let title = ""
   
-  " Get the note title
-  let title = input("New note title: ")
+  " Check if we're in visual mode by looking at the range
+  if a:firstline != a:lastline
+    " Get the selected text
+    let selected_text = join(getline(a:firstline, a:lastline), "\n")
+    
+    " Use first line of selected text as title (cleaned up)
+    let first_line = split(selected_text, '\n')[0]
+    " Limit title length and clean it
+    let title = strpart(first_line, 0, 50)
+    let title = substitute(title, '^\s*\(.\{-}\)\s*$', '\1', '')
+  else
+    let title = input("New note title: ")
+  endif
+  
   if title == ""
     echo "Cancelled"
     return
@@ -239,12 +251,21 @@ function! notes#create_linked_note()
   " Generate the filename
   let timestamp = strftime("%Y%m%d.%H%M")
   let cleaned_title = substitute(title, '[^A-Za-z0-9_-]', '_', 'g')
-  let filename = timestamp . '_' . cleaned_title . g:notes_extension
+  let filename = timestamp . '-' . cleaned_title . g:notes_extension
   let full_path = expand(g:zettelkasten) . '/' . filename
   
-  " Insert the link at current cursor position
-  let link = "[[" . timestamp . '_' . cleaned_title . "]]"
-  call append(line('.'), link)
+  " Create the link text
+  let link = "[[" . timestamp . '-' . cleaned_title . "]]"
+  
+  " If we have selected text, replace it with the link
+  if selected_text != ""
+    " Delete the selected lines and insert the link
+    execute a:firstline . "," . a:lastline . "delete"
+    call append(a:firstline - 1, link)
+  else
+    " Just insert the link on a new line
+    call append(line('.'), link)
+  endif
   
   " Create and prepare the new note file
   execute "split " . full_path
@@ -258,12 +279,15 @@ function! notes#create_linked_note()
   call setline(6, "---")
   call setline(7, "")
   
+  " Add the selected text as content if any
+  if selected_text != ""
+    call append(7, split(selected_text, '\n'))
+  endif
+  
   " Save the new file
   write
   
-  " Return to the original buffer and position
-  execute "buffer " . source_buf
-  call setpos('.', cur_pos)
-  normal! j
+  " Return to the original buffer
+  wincmd p
 endfunction
 
