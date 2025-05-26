@@ -30,7 +30,9 @@ if !hasmapto('<Plug>NotesNewNote')
 endif
 
 if !hasmapto('<Plug>NotesFindNote')
-  map <leader>nf <Plug>NotesFindNote
+  nmap <leader>nf <Plug>NotesFindNote
+  " Add alternative mapping for find
+  nmap <leader>ns <Plug>NotesFindNote  " Additional mapping using 's' for search
 endif
 
 if !hasmapto('<Plug>NotesListNotes')
@@ -52,6 +54,7 @@ endif
 " Define plug mappings
 nnoremap <silent> <Plug>NotesNewNote :<C-U>call notes#make_new_note()<CR>
 vnoremap <silent> <Plug>NotesNewNote :call notes#make_new_note()<CR>
+" More explicit mapping for find notes
 nnoremap <silent> <Plug>NotesFindNote :<C-U>call notes#find_note()<CR>
 nnoremap <silent> <Plug>NotesListNotes :<C-U>call notes#list_notes()<CR>
 nnoremap <silent> <Plug>NotesAddLink :<C-U>call notes#add_link()<CR>
@@ -60,6 +63,10 @@ nnoremap <silent> <Plug>NotesCreateLinked :<C-U>call notes#create_linked_note()<
 
 " Command definitions
 command! -range Notes call notes#make_new_note()
+" Add debug command
+command! -nargs=0 NotesFindDebug echom "Debug: Executing find_note function in " . expand(g:zettelkasten)
+
+" Update the original command definition to be consistent
 command! -nargs=0 NoteFind call notes#find_note()
 command! -nargs=0 NoteList call notes#list_notes()
 command! -nargs=0 NoteLink call notes#add_link()

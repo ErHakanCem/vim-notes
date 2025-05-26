@@ -67,18 +67,31 @@ function! notes#find_note()
     return
   endif
   
+  " Debug message to confirm function is executing
+  echo "Searching for: " . search_term . " in " . expand(g:zettelkasten)
+  
+  " Define grep command properly
+  let grep_cmd = 'grep -l "' . search_term . '" ' . expand(g:zettelkasten) . '/*' . g:notes_extension . ' 2>/dev/null'
+  
   " Use grep or fzf if available
   if exists("*fzf#run")
     " Use FZF to search notes
     call fzf#run({
-      \ 'source': 'grep -l "' . search_term . '" ' . expand(g:zettelkasten) . '/*' . g:notes_extension,
+      \ 'source': grep_cmd,
       \ 'sink': 'edit',
       \ 'options': '--preview "bat --style=numbers --color=always {}"',
       \ 'down': '40%'
       \ })
   else
     " Fallback to simple grep
-    let files = systemlist('grep -l "' . search_term . '" ' . expand(g:zettelkasten) . '/*' . g:notes_extension)
+    let files = systemlist(grep_cmd)
+    if len(files) == 0
+      " Try using find as an alternative in case grep is failing
+      let find_cmd = 'find ' . expand(g:zettelkasten) . ' -type f -name "*' . g:notes_extension . '" | xargs grep -l "' . search_term . '" 2>/dev/null || echo ""'
+      echo "Trying alternative: " . find_cmd
+      let files = systemlist(find_cmd)
+    endif
+    
     if len(files) == 0
       echo "No matching notes found"
       return
