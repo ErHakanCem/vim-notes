@@ -30,9 +30,8 @@ if !hasmapto('<Plug>NotesNewNote')
 endif
 
 if !hasmapto('<Plug>NotesFindNote')
-  nmap <leader>nz <Plug>NotesFindNote  " Changed from nf to nz for find/search
-  " Add alternative mapping for find
-  nmap <leader>ns <Plug>NotesFindNote  " Additional mapping using 's' for search
+  " Avoid using nf which is used by timestamp_notes.vim
+  nmap <leader>ns <Plug>NotesFindNote
 endif
 
 if !hasmapto('<Plug>NotesListNotes')
@@ -48,7 +47,7 @@ if !hasmapto('<Plug>NotesFollowLink')
 endif
 
 if !hasmapto('<Plug>NotesCreateLinked')
-  map <leader>nk <Plug>NotesCreateLinked
+  map <leader>nc <Plug>NotesCreateLinked
 endif
 
 " Define plug mappings
