@@ -225,17 +225,20 @@ endfunction
 
 " Create a new linked note and insert a link at current cursor position
 function! notes#create_linked_note() range
-  " Get selected text in visual mode
+  " Store the current buffer number and position
+  let source_buf = bufnr('%')
+  
+  " Check if we're in visual mode by looking at the range
+  let visual_mode = (a:firstline != a:lastline)
   let selected_text = ""
   let title = ""
   
-  " Check if we're in visual mode
-  if mode() =~# "[vV\<C-v>]" || (a:firstline != a:lastline)
+  if visual_mode
     " Get the selected text
-    let selected_text = join(getline(a:firstline, a:lastline), "\n")
-    
-    " Always use only the first line as title, regardless of selection
-    let title = getline(a:firstline)
+    let lines = getline(a:firstline, a:lastline)
+    let selected_text = join(lines, "\n")
+    " Use first line as title
+    let title = lines[0]
     " Limit title length and clean it
     let title = strpart(title, 0, 50)
     let title = substitute(title, '^\s*\(.\{-}\)\s*$', '\1', '')
@@ -257,8 +260,8 @@ function! notes#create_linked_note() range
   " Create the link text
   let link = "[[" . timestamp . '-' . cleaned_title . "]]"
   
-  " If we have selected text, replace it with the link
-  if selected_text != ""
+  " Handle text replacement
+  if visual_mode
     " Delete the selected lines and insert the link
     silent execute a:firstline . "," . a:lastline . "delete"
     silent call append(a:firstline - 1, link)

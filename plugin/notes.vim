@@ -47,8 +47,10 @@ if !hasmapto('<Plug>NotesFollowLink')
 endif
 
 if !hasmapto('<Plug>NotesCreateLinked')
+  " Normal mode mapping
   nmap <leader>nc <Plug>NotesCreateLinked
-  xmap <leader>nc <Plug>NotesCreateLinked  " Change vmap to xmap for more explicit visual mode mapping
+  " Visual mode mapping - explicit visual mode
+  vmap <leader>nc <Plug>NotesCreateLinked
 endif
 
 " Define plug mappings
@@ -59,8 +61,10 @@ nnoremap <silent> <Plug>NotesFindNote :<C-U>call notes#find_note()<CR>
 nnoremap <silent> <Plug>NotesListNotes :<C-U>call notes#list_notes()<CR>
 nnoremap <silent> <Plug>NotesAddLink :<C-U>call notes#add_link()<CR>
 nnoremap <silent> <Plug>NotesFollowLink :<C-U>call notes#follow_link()<CR>
+" Normal mode - uses <C-U> to clear range
 nnoremap <silent> <Plug>NotesCreateLinked :<C-U>call notes#create_linked_note()<CR>
-xnoremap <silent> <Plug>NotesCreateLinked :<C-U>call notes#create_linked_note()<CR>
+" Visual mode - preserves the range
+vnoremap <silent> <Plug>NotesCreateLinked :call notes#create_linked_note()<CR>
 
 " Command definitions
 command! -range Notes call notes#make_new_note()
